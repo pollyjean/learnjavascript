@@ -1,3 +1,3 @@
 # learnjavascript
 
-Javascript/jQuery code examples
+[Javascript + jQuery Wiki](https://github.com/pollyjean/learnjavascript/wiki)
