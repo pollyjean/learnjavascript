@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> </title>
+
+<style>
+    .tab-menu {
+    	list-style: none;
+    	height:80px;
+    }
+    
+    .tab-menu li {
+        width:99px;
+        height:40px;
+        background-position-y:0;
+        text-indent: -1000px;
+        overflow: hidden;
+        display: inline-block;
+        float:left;
+    }
+    .tab-menu li:hover {
+    	background-position-y: -40px;
+    }
+    .tab-menu li.select {
+    	background-position-y: -80px;
+    	height:80px;
+    }
+    .tab-menu li.menuitem1 {
+    	background-image: url(./images/newbtn.bar.2.png);	
+    }
+    .tab-menu li.menuitem2 {
+    	background-image: url(./images/newbtn.bar.1.png);	
+    }
+    .tab-menu li.menuitem3 {
+    	background-image: url(./images/newbtn.bar.3.png);	
+    }
+    .tab-menu li.menuitem4 {
+    	background-image: url(./images/newbtn.bar.4.png);	
+    }
+    .tab-menu li.menuitem5 {
+    	background-image: url(./images/newbtn.bar.6.png);	
+    }
+    
+    .tab-contents {
+        position:relative;
+        left:10px;
+        top:10px;
+        width:780px;
+        height:340px;
+        overflow:hidden;
+        background:url(./images/content_bg.png) no-repeat;
+    }
+    
+    .tab-contents .content{
+        position: absolute;
+        left:10px;
+        top:10px;
+        display:none;
+    }
+    
+    .tab-contents .content.select{
+        display:block;
+    }
+</style>
+ 
+<script
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script>
+<script>
+    /*
+     * 미션01: 이벤트를 활용한 탭메뉴와 탭패널 연동
+     */
+
+    // 00. 로딩 세팅
+    $(document).ready(function(){
+        // 탭
+        var tabMenuFirst = selectTab('#tabMenu1');
+        tabMenuFirst._tabMenu.on('tabSelect', function(e) {
+            tabContentFirst.setSelectContentNum(e.selectIndex);
+        })
+
+        // 컨텐츠
+        tabContentFirst = showTabContent('.tab-contents');
+    });
+
+    // 각 전역 함수는 각각 기능이 수정된다고 해도 독립적으로 움직일 수 있어여야 한다.
+    // 하나의 함수를 수정했을 때 다른 함수를 수정하게 하면 안된다. (로딩함수에서만 수정할 수 있는 약한 연결고리만 만든다.)
+
+    // 탭 선택 함수
+    function selectTab(tabmenu) {
+        // 01. 변수 선언 (초기값 선언)
+        var _tabMenu = null;
+        var _menuItems = null;
+        var _selectItem = null;
+
+        // 02. 초기화 : 엘리먼트를 변수에 대입 or 필요한 함수 실행
+        function init() {
+            _tabMenu = $(tabmenu);
+            _menuItems = _tabMenu.find('li');
+
+            // 02.1. (옵션) 이벤트 설정
+            _tabMenu.on('click', 'li', function() {
+                setSelectItem($(this));
+            });
+        }
+
+        // 03. 함수 설정 : 함수는 재활용 가능하게
+        function setSelectItem(_item) {
+            if (_selectItem) {
+                _selectItem.removeClass('select');
+            }
+            _selectItem = _item;
+            _selectItem.addClass('select');
+
+            runSelectEvent();
+        }
+
+        function setSelectItemNum(index) {
+            var _item = _menuItems.eq(index);
+            setSelectItem(_item);
+        }
+
+        function runSelectEvent() {
+            var event = jQuery.Event('tabSelect');
+            event.selectIndex = _selectItem.index();
+            event._selectItem = _selectItem;
+            _tabMenu.trigger(event);
+        }
+
+        // 04. 초기화 함수 실행
+        init();
+
+        return {
+            _tabMenu : _tabMenu,
+            setSelectItemNum : setSelectItemNum
+        }
+    }
+
+    // 탭 컨텐츠 보이기 함수
+    function showTabContent(contents) {
+        // 01. 변수 선언
+        var _tabContents = null;
+        var _selectContent = null;
+
+        // 02. 초기화
+        function init() {
+            _tabContents = $(contents).find('.content');
+        }
+
+        // 03. 함수 설정
+        function setSelectContentNum(index) {
+            if (_selectContent) {
+                _selectContent.removeClass('select');
+            }
+            _selectContent = _tabContents.eq(index);
+            _selectContent.addClass('select');
+        }
+
+        // 04. 초기화 함수 실행
+        init();
+
+        // 05. (옵션) 리턴값 전달 : 이 경우에는 내부 함수를 전달
+        return {
+            setSelectContentNum : setSelectContentNum
+        }
+    }
+</script>
+
+
+</head>
+	
+<body>
+    <ul class="tab-menu" id="tabMenu1">
+        <li class="menuitem1">google</li>
+        <li class="menuitem2">facebook</li>
+        <li class="menuitem3">pinterest</li>
+        <li class="menuitem4">twitter</li>
+        <li class="menuitem5">path</li>
+    </ul>
+    		
+    <div class="tab-contents">
+        <div class="content">
+            <img src="images/content_google.png">
+        </div>
+        <div class="content">
+            <img src="images/content_facebook.png">
+        </div>
+        <div class="content">
+            <img src="images/content_pinterest.png">
+        </div>
+        <div class="content">
+            <img src="images/content_twitter.png">
+        </div>
+        <div class="content">
+            <img src="images/content_path.png">
+        </div>
+    </div>
+</body>
+
+</html>
